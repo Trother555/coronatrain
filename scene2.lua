@@ -1,38 +1,16 @@
 
 local composer = require( "composer" )
-
+local physics = require("physics")
+physics.start()
 local scene = composer.newScene()
-
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-function gotoScene(event)
-    composer.gotoScene( event.target.sceneName )
-end
+local particleSystem
 
---[[
-	options = {
-		displayGroup,
-		buttonName,
-		sceneName,	
-	}
-]]
-local buttonsGroup
-
-function newSceneButton(o)
-	local textBaseX = display.contentCenterX
-	local textBaseY = 100
-	local buttonStep = 50
-
-	local sceneButton = display.newText(o.displayGroup, 
-		o.buttonName, textBaseX, 
-		textBaseY + 50*buttonsGroup.numChildren, native.systemFont, 44 )
-	sceneButton.sceneName = o.sceneName
-	sceneButton:addEventListener("tap", gotoScene)
-end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -42,13 +20,15 @@ end
 function scene:create( event )
 
 	local sceneGroup = self.view
-	-- Code here runs when the scene is first created but has not yet appeared on screen
+    -- Code here runs when the scene is first created but has not yet appeared on screen
+    
+    particleSystem = physics.newParticleSystem(
+    {
+        filename = "./scene2/particle.png",
+        radius = 2,
+        imageRadius = 4
+    })
 
-	buttonsGroup = display.newGroup()
-	sceneGroup:insert(buttonsGroup)
-
-	newSceneButton({displayGroup = buttonsGroup, buttonName = "Scene1", sceneName = "scene1"})
-	newSceneButton({displayGroup = buttonsGroup, buttonName = "Scene2", sceneName = "scene2"})
 end
 
 
@@ -60,9 +40,24 @@ function scene:show( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
-
+        local function onTimer( event )
+ 
+            particleSystem:createParticle(
+            {
+                x = 100,
+                y = 0,
+                velocityX = 256,
+                velocityY = 480,
+                color = { 1, 0.2, 0.4, 1 },
+                lifetime = 32.0,
+                flags = { "water", "colorMixing" }
+            })
+        end
+         
+        timer.performWithDelay( 20, onTimer, 0 )
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
+
 	end
 end
 
@@ -78,6 +73,7 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
+
 	end
 end
 
@@ -87,6 +83,7 @@ function scene:destroy( event )
 
 	local sceneGroup = self.view
 	-- Code here runs prior to the removal of scene's view
+
 end
 
 
