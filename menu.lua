@@ -32,7 +32,6 @@ function newSceneButton(o)
 		textBaseY + 50*buttonsGroup.numChildren, native.systemFont, 44 )
 	sceneButton.sceneName = o.sceneName
 	sceneButton:addEventListener("tap", gotoScene)
-	print(buttonsGroup.numChildren)
 end
 
 -- -----------------------------------------------------------------------------------
@@ -79,7 +78,6 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
-		audio.stop( 1 )
 	end
 end
 
