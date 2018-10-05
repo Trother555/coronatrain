@@ -1,5 +1,7 @@
 
 local composer = require( "composer" )
+local json = require( "json" )
+local mymod = require("mymodule")
 
 local scene = composer.newScene()
 
@@ -9,8 +11,7 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 local embossedText
-
-
+local emitter
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -26,48 +27,29 @@ function scene:create( event )
 		highlight = { r=1, g=0, b=0.5 },
 		shadow = { r=0.3, g=0.3, b=0.3 }
 	}
-	embossedText = display.newEmbossedText(sceneGroup, "Hello", 
-		display.contentCenterX, display.contentCenterY, "Wilhelm Klingspor Gotisch", 100)
-	embossedText:setEmbossColor(color)
+	embossedText = display.newText(sceneGroup, "Hello", 
+		display.contentCenterX, display.contentCenterY, "Wilhelm Klingspor Gotisch.ttf", 100)
+	embossedText:setFillColor(1,0,0)
 
-	-- Table of emitter parameters
-	local emitterParams = {
-		startColorAlpha = 1,
-		startParticleSizeVariance = 53.47,
-		startColorGreen = 0.3031555,
-		yCoordFlipped = -1,
-		blendFuncSource = 770,
-		rotatePerSecondVariance = 153.95,
-		particleLifespan = 0.7237,
-		tangentialAcceleration = -144.74,
-		finishColorBlue = 0.3699196,
-		finishColorGreen = 0.5443883,
-		blendFuncDestination = 1,
-		startParticleSize = 50.95,
-		startColorRed = 0.8373094,
-		textureFileName = "fire.png",
-		startColorVarianceAlpha = 1,
-		maxParticles = 256,
-		finishParticleSize = 64,
-		duration = -1,
-		finishColorRed = 1,
-		maxRadiusVariance = 72.63,
-		finishParticleSizeVariance = 64,
-		gravityy = -671.05,
-		speedVariance = 90.79,
-		tangentialAccelVariance = -92.11,
-		angleVariance = -142.62,
-		angle = -244.11
-	}
-	
-	-- Create the emitter
-	local emitter = display.newEmitter( emitterParams )
-	
-	-- Center the emitter within the content area
-	emitter.x = display.contentCenterX
-	emitter.y = display.contentCenterY
+	local status
+	status, emitter = pcall(mymod.loadParticle, './scene1/fire')
+	if(not status) then
+		print('Unable to load texture fire')
+	else
+		emitter.x = display.contentWidth - 30
+		emitter.y = display.contentCenterY
+		sceneGroup:insert(emitter)
+	end
 
-	--sceneGroup:insert(emitter)
+	status, emitter = pcall(mymod.loadParticle, './scene1/fire')
+	if(not status) then
+		print('Unable to load texture fire')
+	else
+		emitter.x = 30
+		emitter.y = display.contentCenterY
+		sceneGroup:insert(emitter)
+	end
+	
 end
 
 
