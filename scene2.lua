@@ -10,7 +10,9 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 local particleSystem
-
+local platform
+local textVanya
+local hourglass
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -28,7 +30,70 @@ function scene:create( event )
         radius = 2,
         imageRadius = 4
     })
+    
+    platform = display.newRect(sceneGroup, display.contentCenterX,
+            display.contentCenterY, 200, 100 )
+    platform:setFillColor(0,0,1)
+    physics.addBody( platform, "static" )
+    textVanya = display.newText(sceneGroup, "Vanya", display.contentCenterX,
+            display.contentCenterY, "Wilhelm Klingspor Gotisch.ttf", 100)
+    local hgHeight = 100
+    local hgWidth = 60
+    local hgStep = 10
+    local hgOffsetX = 150
+    local hgOffsetY = 100
 
+    --[[for k in pairs(hourglassVerices) do
+        if k%2 ~= 0 then
+            hourglassVerices[k] = hourglassVerices[k] + hgOffsetX
+        else
+            hourglassVerices[k] = hourglassVerices[k] + hgOffsetY
+        end
+    end]]
+    hourglass = display.newRect(sceneGroup, 150, 100, hgWidth, hgHeight)
+    local hgTop = {
+        -hgWidth/2, hgHeight/2,
+        -hgWidth/2, hgHeight/2 - hgStep,
+        hgWidth/2, hgHeight/2 - hgStep,
+        hgWidth/2, hgHeight/2
+    }
+    local hgBot = {
+        -hgWidth/2, -hgHeight/2,
+        -hgWidth/2, -hgHeight/2 + hgStep,
+        hgWidth/2, -hgHeight/2 + hgStep,
+        hgWidth/2, -hgHeight/2
+    }
+    local hgLeftUp = {
+        -hgWidth/2, hgHeight/2 - hgStep,
+        -2*hgStep, 0,
+        -hgStep/2, 0,
+        -2*hgStep, hgHeight/2 - hgStep,
+    }
+    local hgRightUp = {
+        hgWidth/2, hgHeight/2 - hgStep,
+        2*hgStep, 0,
+        hgStep/2, 0,
+        2*hgStep, hgHeight/2 - hgStep,
+    }
+    local hgLeftDown = {
+        -hgWidth/2, -hgHeight/2 + hgStep,
+        -2*hgStep, 0,
+        -hgStep/2, 0,
+        -2*hgStep, -hgHeight/2 + hgStep,
+    }
+    local hgRightDown = {
+        hgWidth/2, -hgHeight/2 + hgStep,
+        2*hgStep, 0,
+        hgStep/2, 0,
+        2*hgStep, -hgHeight/2 + hgStep,
+    }
+    physics.addBody( hourglass, "static",
+        {shape=hgTop},
+        {shape=hgBot},
+        {shape=hgLeftUp},
+        {shape=hgRightUp},
+        {shape=hgLeftDown},
+        {shape=hgRightDown});
 end
 
 
@@ -44,16 +109,15 @@ function scene:show( event )
  
             particleSystem:createParticle(
             {
-                x = 100,
-                y = 0,
+                x = 150,
+                y = 100,
                 velocityX = 256,
                 velocityY = 480,
                 color = { 1, 0.2, 0.4, 1 },
                 lifetime = 32.0,
-                flags = { "water", "colorMixing" }
+                flags = { "water", "colorMixing", "fixtureContactListener" }
             })
         end
-         
         timer.performWithDelay( 20, onTimer, 0 )
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
